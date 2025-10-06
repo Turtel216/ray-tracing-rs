@@ -1,3 +1,6 @@
+use std::fmt::{Display, Formatter, Result};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
+
 #[derive(Copy, Clone, Default)]
 pub struct Vec3 {
     e: [f64, 3];
@@ -20,6 +23,98 @@ impl Vec3 {
         self.e[2]
     }
 
+    pub fn length(&self) -> f64 {
+        f64::sqrt(self.length_squared())
+    }
+
+    pub fn lenght_squared(&self) -> f64 {
+        self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
+    }
+
 }
 
 pub type Point3 = Vec3;
+
+impl Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Vec3 {
+        Vec3::new(-self.x(), =self.y(), -self.z())
+    }
+}
+
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, v: Vec3) {
+        *self = &self + v;
+    }
+}
+
+impl MulAssign<f64> for Vec3 {
+    fn mul_assign(&mut self, t: f64) {
+        *self = *self * t;
+    }
+}
+
+impl Add for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x() + v.x(), self.y() + v.y(), self.z() + v.z())
+    }
+}
+
+impl Sub for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x() - v.x(), self.y() - v.y(), self.z() - v.z())
+    }
+}
+
+impl Mul for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, v: Vec3) -> Vec3 {
+        Vec3::new(self.x() * v.x(), self.y() * v.y(), self.z() * v.z())
+    }
+}
+
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, v: Vec3) -> Vec3 {
+        Vec3::new(self * v.x(), self * v.y(), self * v.z())
+    }
+}
+
+impl Mul<f64> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, t: f64) -> Vec3 {
+        Vec3::new(self.x() * t, self.y() * t, self.z() * t)
+    }
+}
+
+impl Div<f64> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, t: f64) -> Vec3 {
+        Vec3::new(self.x() / t, self.y() / t, self.z() / t)
+    }
+}
+
+pub fn dot(u: Vec3, v: Vec3) -> f64 {
+    u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2]
+}
+
+pub fn cross(u: Vec3, v: Vec3) -> Vec3 {
+    Vec3::new(
+        u.e[1] * v.e[2] - u.e[2] * v.e[1],
+        u.e[2] * v.e[0] - u.e[0] * v.e[2],
+        u.e[0] * v.e[1] - u.e[1] * v.e[0],
+    )
+}
+
+pub fn unit_vector(v: Vec3) -> Vec3 {
+    v / v.length()
+}
