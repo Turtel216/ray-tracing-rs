@@ -3,12 +3,12 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
 
 #[derive(Copy, Clone, Default)]
 pub struct Vec3 {
-    e: [f64, 3];
+    e: [f64; 3],
 }
 
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
-        Vec3{ e: [x, y, z] }
+        Vec3 { e: [x, y, z] }
     }
 
     pub fn x(&self) -> f64 {
@@ -27,10 +27,9 @@ impl Vec3 {
         f64::sqrt(self.length_squared())
     }
 
-    pub fn lenght_squared(&self) -> f64 {
+    pub fn length_squared(&self) -> f64 {
         self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
     }
-
 }
 
 pub type Point3 = Vec3;
@@ -39,13 +38,13 @@ impl Neg for Vec3 {
     type Output = Vec3;
 
     fn neg(self) -> Vec3 {
-        Vec3::new(-self.x(), =self.y(), -self.z())
+        Vec3::new(-self.x(), -self.y(), -self.z())
     }
 }
 
 impl AddAssign for Vec3 {
     fn add_assign(&mut self, v: Vec3) {
-        *self = &self + v;
+        *self = *self + v;
     }
 }
 
