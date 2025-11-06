@@ -155,9 +155,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by [Ray Tracing in One Weekend](https://raytracing.github.io/) by Peter Shirley
 - [Rayon](https://github.com/rayon-rs/rayon) for effortless parallelism
 - The Rust community for excellent documentation and support
-
-## Contact
-
-Your Name - [@papakonstantinou](https://gitlab.com/papakonstantinou)
-
-Project Link: [Gitlab](https://gitlab.com/papakonstantinou/ray-tracing-rs)
