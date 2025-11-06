@@ -8,7 +8,7 @@ use color::Color;
 use ray::Ray;
 use vec::{Point3, Vec3};
 
-fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
+fn hit_sphere(center: Point3, radius: f32, r: &Ray) -> f32 {
     let oc = r.origin() - center;
     let a = r.direction().length_squared();
     let half_b = vec::dot(oc, r.direction());
@@ -17,7 +17,7 @@ fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
     if discriminant < 0.0 {
         -1.0
     } else {
-        (-half_b - f64::sqrt(discriminant)) / a
+        (-half_b - f32::sqrt(discriminant)) / a
     }
 }
 
@@ -36,9 +36,9 @@ fn ray_color(r: &Ray) -> Color {
 fn main() {
     // Image
 
-    const ASPECT_RATIO: f64 = 16.0 / 9.0;
+    const ASPECT_RATIO: f32 = 16.0 / 9.0;
     const IMAGE_WIDTH: i32 = 400;
-    const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as i32;
+    const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
 
     // Camera
 
@@ -59,8 +59,8 @@ fn main() {
     for j in (0..IMAGE_HEIGHT).rev() {
         eprint!("\rScanlines remaining: {} ", j);
         for i in 0..IMAGE_WIDTH {
-            let u = i as f64 / (IMAGE_WIDTH - 1) as f64;
-            let v = j as f64 / (IMAGE_HEIGHT - 1) as f64;
+            let u = i as f32 / (IMAGE_WIDTH - 1) as f32;
+            let v = j as f32 / (IMAGE_HEIGHT - 1) as f32;
             let r = Ray::new(
                 origin,
                 lower_left_corner + u * horizontal + v * vertical - origin,

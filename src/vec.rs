@@ -3,31 +3,31 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
 
 #[derive(Copy, Clone, Default)]
 pub struct Vec3 {
-    e: [f64; 3],
+    e: [f32; 3],
 }
 
 impl Vec3 {
-    pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
+    pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Vec3 { e: [x, y, z] }
     }
 
-    pub fn x(&self) -> f64 {
+    pub fn x(&self) -> f32 {
         self.e[0]
     }
 
-    pub fn y(&self) -> f64 {
+    pub fn y(&self) -> f32 {
         self.e[1]
     }
 
-    pub fn z(&self) -> f64 {
+    pub fn z(&self) -> f32 {
         self.e[2]
     }
 
-    pub fn length(&self) -> f64 {
-        f64::sqrt(self.length_squared())
+    pub fn length(&self) -> f32 {
+        f32::sqrt(self.length_squared())
     }
 
-    pub fn length_squared(&self) -> f64 {
+    pub fn length_squared(&self) -> f32 {
         self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
     }
 }
@@ -48,8 +48,8 @@ impl AddAssign for Vec3 {
     }
 }
 
-impl MulAssign<f64> for Vec3 {
-    fn mul_assign(&mut self, t: f64) {
+impl MulAssign<f32> for Vec3 {
+    fn mul_assign(&mut self, t: f32) {
         *self = *self * t;
     }
 }
@@ -78,7 +78,7 @@ impl Mul for Vec3 {
     }
 }
 
-impl Mul<Vec3> for f64 {
+impl Mul<Vec3> for f32 {
     type Output = Vec3;
 
     fn mul(self, v: Vec3) -> Vec3 {
@@ -86,23 +86,23 @@ impl Mul<Vec3> for f64 {
     }
 }
 
-impl Mul<f64> for Vec3 {
+impl Mul<f32> for Vec3 {
     type Output = Vec3;
 
-    fn mul(self, t: f64) -> Vec3 {
+    fn mul(self, t: f32) -> Vec3 {
         Vec3::new(self.x() * t, self.y() * t, self.z() * t)
     }
 }
 
-impl Div<f64> for Vec3 {
+impl Div<f32> for Vec3 {
     type Output = Vec3;
 
-    fn div(self, t: f64) -> Vec3 {
+    fn div(self, t: f32) -> Vec3 {
         Vec3::new(self.x() / t, self.y() / t, self.z() / t)
     }
 }
 
-pub fn dot(u: Vec3, v: Vec3) -> f64 {
+pub fn dot(u: Vec3, v: Vec3) -> f32 {
     u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2]
 }
 
