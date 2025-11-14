@@ -38,7 +38,7 @@ fn ray_color(l: &Ray, world: &dyn Hittable, depth: i32) -> Color {
     }
 
     let mut rec = HitRecord::new();
-    if world.hit(l, 0.0, util::INFINITY, &mut rec) {
+    if world.hit(l, 0.001, util::INFINITY, &mut rec) {
         let direction = rec.normal + vec::random_in_unit_sphere();
         return 0.5 * ray_color(&Ray::new(rec.p, direction), world, depth - 1);
     }
