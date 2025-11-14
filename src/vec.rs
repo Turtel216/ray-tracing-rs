@@ -2,6 +2,8 @@ use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub};
 use std::simd::f32x4;
 use std::simd::num::SimdFloat;
 
+use crate::util;
+
 #[derive(Copy, Clone, Default)]
 pub struct Vec3 {
     e: [f32; 3],
@@ -10,6 +12,22 @@ pub struct Vec3 {
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Vec3 { e: [x, y, z] }
+    }
+
+    pub fn random() -> Vec3 {
+        Vec3::new(
+            util::random_double(),
+            util::random_double(),
+            util::random_double(),
+        )
+    }
+
+    pub fn random_range(min: f32, max: f32) -> Vec3 {
+        Vec3::new(
+            util::random_double_range(min, max),
+            util::random_double_range(min, max),
+            util::random_double_range(min, max),
+        )
     }
 
     #[inline]
@@ -150,4 +168,14 @@ fn dot_simd(u: Vec3, v: Vec3) -> f32 {
 #[inline]
 fn dot_scalar(u: Vec3, v: Vec3) -> f32 {
     u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2]
+}
+
+pub fn random_in_unit_sphere() -> Vec3 {
+    loop {
+        let p = Vec3::random_range(-1.0, 1.0);
+        if p.length_squared() >= 1.0 {
+            continue;
+        }
+        return p;
+    }
 }

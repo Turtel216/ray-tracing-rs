@@ -31,10 +31,16 @@ fn hit_sphere(center: Point3, radius: f32, r: &Ray) -> f32 {
     }
 }
 
-fn ray_color(l: &Ray, world: &dyn Hittable) -> Color {
+fn ray_color(l: &Ray, world: &dyn Hittable, depth: i32) -> Color {
+    // Make sure there is no stack overflow
+    if depth <= 0 {
+        return Color::new(0.0, 0.0, 0.0);
+    }
+
     let mut rec = HitRecord::new();
     if world.hit(l, 0.0, util::INFINITY, &mut rec) {
-        return 0.5 * (rec.normal + Color::new(1.0, 1.0, 1.0));
+        let direction = rec.normal + vec::random_in_unit_sphere();
+        return 0.5 * ray_color(&Ray::new(rec.p, direction), world, depth - 1);
     }
 
     let unit_direction = vec::unit_vector(l.direction());
@@ -49,6 +55,7 @@ fn main() {
     const IMAGE_WIDTH: i32 = 400;
     const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
     const SAMPLES_PER_PIXEL: i32 = 100;
+    const MAX_DEPTH: i32 = 50;
 
     // World
     let mut world = HittableList::new();
@@ -65,7 +72,7 @@ fn main() {
     let origin = Point3::new(0.0, 0.0, 0.0);
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner =
+    let _lower_left_corner =
         origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_length);
 
     // Render
@@ -80,7 +87,7 @@ fn main() {
                 let u = (i as f32 + util::random_double()) / (IMAGE_WIDTH - 1) as f32;
                 let v = (j as f32 + util::random_double()) / (IMAGE_HEIGHT - 1) as f32;
                 let r = cam.get_ray(u, v);
-                pixel_color += ray_color(&r, &world);
+                pixel_color += ray_color(&r, &world, MAX_DEPTH);
             }
             color::write_color(&mut io::stdout(), pixel_color, SAMPLES_PER_PIXEL);
         }
