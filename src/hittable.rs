@@ -1,3 +1,6 @@
+use std::rc::Rc;
+
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec::{self, Point3, Vec3};
 
@@ -5,6 +8,7 @@ use crate::vec::{self, Point3, Vec3};
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
+    pub mat: Option<Rc<dyn Material>>,
     pub t: f32,
     pub front_face: bool,
 }
