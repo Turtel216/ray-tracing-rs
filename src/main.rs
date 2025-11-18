@@ -23,19 +23,6 @@ use ray::Ray;
 use sphere::Sphere;
 use vec::{Point3, Vec3};
 
-fn hit_sphere(center: Point3, radius: f32, r: &Ray) -> f32 {
-    let oc = r.origin() - center;
-    let a = r.direction().length_squared();
-    let half_b = vec::dot(oc, r.direction());
-    let c = oc.length_squared() - radius * radius;
-    let discriminant = half_b * half_b - a * c;
-    if discriminant < 0.0 {
-        -1.0
-    } else {
-        (-half_b - f32::sqrt(discriminant)) / a
-    }
-}
-
 fn ray_color(l: &Ray, world: &dyn Hittable, depth: i32) -> Color {
     // Make sure there is no stack overflow
     if depth <= 0 {
@@ -111,7 +98,7 @@ fn main() {
         Point3::new(-2.0, 2.0, 1.0),
         Point3::new(0.0, 0.0, -1.0),
         Vec3::new(0.0, 1.0, 0.0),
-        90.0,
+        20.0,
         ASPECT_RATIO,
     );
 
