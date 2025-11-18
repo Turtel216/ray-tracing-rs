@@ -55,63 +55,16 @@ cargo build --release
 # Run the raytracer
 cargo run --release > image.ppm
 ```
-<!--
-## Usage
 
-### Basic Example
-
-```rust
-use raytracer::{Camera, Scene, Sphere, Vector3, Material};
-
-fn main() {
-    // Create a scene
-    let mut scene = Scene::new();
-    
-    // Add objects
-    scene.add(Sphere::new(
-        Vector3::new(0.0, 0.0, -5.0),
-        1.0,
-        Material::diffuse(Vector3::new(0.8, 0.3, 0.3))
-    ));
-    
-    // Configure camera
-    let camera = Camera::new()
-        .position(Vector3::new(0.0, 0.0, 0.0))
-        .look_at(Vector3::new(0.0, 0.0, -1.0))
-        .field_of_view(60.0)
-        .aspect_ratio(16.0 / 9.0);
-    
-    // Render the scene
-    let image = camera.render(&scene, 1920, 1080);
-    image.save("output.png").unwrap();
-}
-```
-
-### Configuration
-
-Adjust rendering parameters in your code or configuration file:
-
-```rust
-let config = RenderConfig {
-    width: 1920,
-    height: 1080,
-    samples_per_pixel: 64,
-    max_ray_depth: 8,
-    num_threads: None, // Auto-detect CPU cores
-};
-```
--->
-
-## Performance Benchmarks TODO
-<!--
-Benchmark results on an AMD Ryzen 5 3600 (6 cores / 12 threads):
+## Performance Benchmarks
+Benchmark results on an AMD Ryzen 5 3600 (6 cores / 12 threads) using [hyperfine](https://github.com/sharkdp/hyperfine)
 
 | Method | Render Time |
 |------------|---------|---------|
-| Singly Threaded  | ~8.2s       |
-| Singly Threaded + SIMD | ~8.2s |
-| Multithreaded | ~8.2s          |
-| Multithreaded + SIMD | ~8.2s   |
+| Singly Threaded  | TODO       |
+| Singly Threaded + SIMD | TODO |
+| Multi-threaded | TODO |
+| Multi-threaded + SIMD | TODO |
 
 *Performance may vary based on scene complexity and hardware*
 
@@ -119,26 +72,6 @@ Benchmark results on an AMD Ryzen 5 3600 (6 cores / 12 threads):
 
 - **Rayon**: Parallelizes pixel rendering across all CPU cores
 - **SIMD**: Vectorizes mathematical operations for 4× throughput improvement
-- **Rust Zero-Cost Abstractions**: Clean code without runtime overhead
--->
-
-<!--
-## Architecture
-
-```
-src/
-├── main.rs           # Entry point
-├── camera.rs         # Camera system with positioning
-├── ray.rs            # Ray definition and methods
-├── vector.rs         # SIMD-optimized vector operations
-├── scene.rs          # Scene management
-├── geometry/         # Geometric primitives
-│   ├── sphere.rs
-│   └── plane.rs
-├── material.rs       # Material definitions
-└── renderer.rs       # Parallel rendering engine
-```
--->
 
 ## Contributing
 
