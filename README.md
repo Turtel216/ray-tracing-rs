@@ -10,7 +10,7 @@ A high-performance CPU-based raytracer implementation in Rust, featuring paralle
 This raytracer is a from-scratch implementation that leverages modern CPU capabilities to generate photorealistic images through ray tracing techniques. Built with performance in mind, it demonstrates the power of Rust's safety guarantees combined with low-level optimization strategies.
 
 ## Sample Scene 
-![Example Scene](/assets/scene.ppm)
+![Example Scene](/assets/scene.png)
 
 ## Key Features
 
