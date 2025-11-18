@@ -60,8 +60,8 @@ cargo run --release > image.ppm
 Benchmark results on an AMD Ryzen 5 3600 (6 cores / 12 threads) using [hyperfine](https://github.com/sharkdp/hyperfine)
 
 | Method | Render Time |
-|------------|---------|---------|
-| Singly Threaded  | TODO       |
+|------------|---------|
+| Singly Threaded | TODO |
 | Singly Threaded + SIMD | TODO |
 | Multi-threaded | TODO |
 | Multi-threaded + SIMD | TODO |
