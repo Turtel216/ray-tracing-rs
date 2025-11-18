@@ -9,6 +9,9 @@ A high-performance CPU-based raytracer implementation in Rust, featuring paralle
 
 This raytracer is a from-scratch implementation that leverages modern CPU capabilities to generate photorealistic images through ray tracing techniques. Built with performance in mind, it demonstrates the power of Rust's safety guarantees combined with low-level optimization strategies.
 
+## Sample Scene 
+![Example Scene](/assets/scene.ppm)
+
 ## Key Features
 
 ### **Parallel Rendering with Rayon**
@@ -43,14 +46,14 @@ This raytracer is a from-scratch implementation that leverages modern CPU capabi
 
 ```bash
 # Clone the repository
-git clone https://github.com/Turtel216/raytracer.git
-cd raytracer
+git clone https://github.com/Turtel216/raytracer-rs.git
+cd raytracer-rs
 
 # Build in release mode (recommended for performance)
 cargo build --release
 
 # Run the raytracer
-cargo run --release
+cargo run --release > image.ppm
 ```
 <!--
 ## Usage
@@ -99,15 +102,16 @@ let config = RenderConfig {
 ```
 -->
 
-## Performance: TODO
+## Performance Benchmarks TODO
 <!--
-Benchmark results on an AMD Ryzen 9 5900X (12 cores / 24 threads):
+Benchmark results on an AMD Ryzen 5 3600 (6 cores / 12 threads):
 
-| Resolution | Samples | Render Time |
-|------------|---------|-------------|
-| 1920×1080  | 16 SPP  | ~8.2s       |
-| 1920×1080  | 64 SPP  | ~31.5s      |
-| 3840×2160  | 16 SPP  | ~33.1s      |
+| Method | Render Time |
+|------------|---------|---------|
+| Singly Threaded  | ~8.2s       |
+| Singly Threaded + SIMD | ~8.2s |
+| Multithreaded | ~8.2s          |
+| Multithreaded + SIMD | ~8.2s   |
 
 *Performance may vary based on scene complexity and hardware*
 
