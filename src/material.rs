@@ -1,7 +1,7 @@
 use crate::color::Color;
 use crate::hittable::HitRecord;
 use crate::ray::Ray;
-use crate::vec;
+use crate::{util, vec};
 
 pub trait Material {
     fn scatter(
@@ -83,6 +83,13 @@ impl Dielectric {
             ir: index_of_refraction,
         }
     }
+
+    fn reflectance(cosine: f32, ref_idx: f32) -> f32 {
+        // Schlick's approximation
+        let mut r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+        r0 = r0 * r0;
+        r0 + (1.0 - r0) * f32::powf(1.0 - cosine, 5.0)
+    }
 }
 
 impl Material for Dielectric {
@@ -104,7 +111,9 @@ impl Material for Dielectric {
         let sin_theta = f32::sqrt(1.0 - cos_theta * cos_theta);
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
-        let direction = if cannot_refract {
+        let direction = if cannot_refract
+            || Self::reflectance(cos_theta, refraction_ratio) > util::random_double()
+        {
             vec::reflect(unit_direction, rec.normal)
         } else {
             vec::refract(unit_direction, rec.normal, refraction_ratio)
