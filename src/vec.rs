@@ -1,6 +1,4 @@
 use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub};
-use std::simd::f32x4;
-use std::simd::num::SimdFloat;
 
 use crate::util;
 
@@ -159,20 +157,6 @@ pub fn cross(u: Vec3, v: Vec3) -> Vec3 {
 #[inline]
 pub fn unit_vector(v: Vec3) -> Vec3 {
     v / v.length()
-}
-
-#[inline]
-fn dot_simd(u: Vec3, v: Vec3) -> f32 {
-    let u_simd = f32x4::from_array([u.e[0], u.e[1], u.e[2], 0.0]);
-    let v_simd = f32x4::from_array([v.e[0], v.e[1], v.e[2], 0.0]);
-
-    let mul = u_simd * v_simd;
-    mul.reduce_sum()
-}
-
-#[inline]
-fn dot_scalar(u: Vec3, v: Vec3) -> f32 {
-    u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2]
 }
 
 pub fn random_in_unit_sphere() -> Vec3 {

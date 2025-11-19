@@ -9,7 +9,7 @@ mod sphere;
 mod util;
 mod vec;
 
-use std::{io, rc::Rc, sync::Arc};
+use std::{io, sync::Arc};
 
 use rayon::prelude::*;
 
