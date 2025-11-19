@@ -1,2 +1,4 @@
 /target
 image.ppm
+perf.data 
+flamegraph.svg

@@ -87,6 +87,41 @@ fn random_scene() -> HittableList {
     world
 }
 
+/// Generates the scene used in the perfomance benchmarks
+fn benchmark_scene() -> HittableList {
+    let mut world = HittableList::new();
+
+    let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    world.add(Box::new(Sphere::new(
+        Point3::new(0.0, -1000.0, 0.0),
+        1000.0,
+        ground_material,
+    )));
+
+    let material1 = Rc::new(Dielectric::new(1.5));
+    world.add(Box::new(Sphere::new(
+        Point3::new(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    )));
+
+    let material2 = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    world.add(Box::new(Sphere::new(
+        Point3::new(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    )));
+
+    let material3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Box::new(Sphere::new(
+        Point3::new(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    )));
+
+    return world;
+}
+
 fn ray_color(l: &Ray, world: &dyn Hittable, depth: i32) -> Color {
     // Make sure there is no stack overflow
     if depth <= 0 {
