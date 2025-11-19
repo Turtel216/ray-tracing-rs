@@ -1,4 +1,5 @@
 use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
@@ -8,11 +9,11 @@ use crate::vec::{self, Point3};
 pub struct Sphere {
     center: Point3,
     radius: f32,
-    mat: Rc<dyn Material>,
+    mat: Arc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(cen: Point3, r: f32, material: Rc<dyn Material>) -> Sphere {
+    pub fn new(cen: Point3, r: f32, material: Arc<dyn Material>) -> Sphere {
         Sphere {
             center: cen,
             radius: r,
