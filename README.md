@@ -61,18 +61,17 @@ Benchmark results on an AMD Ryzen 5 3600 (6 cores / 12 threads) using [hyperfine
 
 | Method | Render Time |
 |------------|---------|
-| Single Threaded | 24.420 |
-| Single Threaded + SIMD | TODO |
+| [Single Threaded](gitlab.com/papakonstantinou/ray-tracing-rs/-/tree/benchmark/single-threaded-simd) | 24.420 |
+| [Single Threaded + SIMD](gitlab.com/papakonstantinou/ray-tracing-rs/-/tree/benchmark/single-threaded-simd) | 24.868 |
 | Multi-threaded | TODO |
 | Multi-threaded + SIMD | TODO |
-
-
-*Performance may vary based on scene complexity and hardware*
 
 ### Optimization Techniques
 
 - **Rayon**: Parallelizes pixel rendering across all CPU cores
 - **SIMD**: Vectorizes mathematical operations for 4× throughput improvement
+
+### Conclusion TODO
 
 ## Contributing
 

@@ -142,20 +142,9 @@ impl Div<f32> for Vec3 {
     }
 }
 
+#[inline]
 pub fn dot(u: Vec3, v: Vec3) -> f32 {
-    #[cfg(target_arch = "x86_64")]
-    {
-        if is_x86_feature_detected!("sse4.1") {
-            dot_simd(u, v)
-        } else {
-            dot_scalar(u, v)
-        }
-    }
-
-    #[cfg(not(target_arch = "x86_64"))]
-    {
-        dot_scalar(u, v)
-    }
+    u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2]
 }
 
 #[inline]
