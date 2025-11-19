@@ -61,8 +61,8 @@ Benchmark results on an AMD Ryzen 5 3600 (6 cores / 12 threads) using [hyperfine
 
 | Method | Render Time |
 |------------|---------|
-| Singly Threaded | TODO |
-| Singly Threaded + SIMD | TODO |
+| Single Threaded | 24.420 |
+| Single Threaded + SIMD | TODO |
 | Multi-threaded | TODO |
 | Multi-threaded + SIMD | TODO |
 
