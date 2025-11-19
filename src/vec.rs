@@ -3,11 +3,14 @@ use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub};
 use std::simd::{StdFloat, f32x4, num::SimdFloat};
 #[derive(Copy, Clone, Default, Debug)]
 pub struct Vec3 {
+    // We use a 4-lane SIMD vector.
+    // e[0]=x, e[1]=y, e[2]=z, e[3]=0.0 (padding)
     e: f32x4,
 }
 
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
+        // We deliberately set the 4th element to 0.0
         Vec3 {
             e: f32x4::from_array([x, y, z, 0.0]),
         }
@@ -62,12 +65,16 @@ impl Vec3 {
     #[inline]
     pub fn near_zero(&self) -> bool {
         const EPS: f32 = 1.0e-8;
-
+        // We can check all lanes at once, but we must ensure the padding (0.0)
+        // doesn't trigger a false positive if our logic was inverted.
+        // Here, we just manually check x,y,z to ignore the 4th lane entirely.
         self.e[0].abs() < EPS && self.e[1].abs() < EPS && self.e[2].abs() < EPS
     }
 }
 
 pub type Point3 = Vec3;
+
+// --- Operator Overloading ---
 
 impl Neg for Vec3 {
     type Output = Vec3;
@@ -111,6 +118,7 @@ impl Mul for Vec3 {
     type Output = Vec3;
     #[inline]
     fn mul(self, v: Vec3) -> Vec3 {
+        // Component-wise multiplication
         Vec3::from_simd(self.e * v.e)
     }
 }
@@ -135,9 +143,13 @@ impl Div<f32> for Vec3 {
     type Output = Vec3;
     #[inline]
     fn div(self, t: f32) -> Vec3 {
+        // Multiplication by inverse is often faster than division,
+        // but strict division is safer for precision.
         Vec3::from_simd(self.e / f32x4::splat(t))
     }
 }
+
+// --- Utility Functions ---
 
 #[inline]
 pub fn dot(u: Vec3, v: Vec3) -> f32 {
@@ -146,6 +158,9 @@ pub fn dot(u: Vec3, v: Vec3) -> f32 {
 
 #[inline]
 pub fn cross(u: Vec3, v: Vec3) -> Vec3 {
+    // SIMD cross product usually requires shuffling lanes (swizzling).
+    // For clarity, we can stick to the algebraic definition,
+    // but we construct the final f32x4 array directly.
     let x = u.e[1] * v.e[2] - u.e[2] * v.e[1];
     let y = u.e[2] * v.e[0] - u.e[0] * v.e[2];
     let z = u.e[0] * v.e[1] - u.e[1] * v.e[0];
@@ -154,6 +169,8 @@ pub fn cross(u: Vec3, v: Vec3) -> Vec3 {
 
 #[inline]
 pub fn unit_vector(v: Vec3) -> Vec3 {
+    // We calculate length, splat it, and divide the vector by it
+    // Note: If length is 0, this produces NaNs, just like the original code.
     Vec3::from_simd(v.e / f32x4::splat(v.length()))
 }
 
