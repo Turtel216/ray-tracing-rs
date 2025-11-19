@@ -3,20 +3,22 @@ pub use std::f32::consts::PI;
 
 use rand::Rng;
 
-// Utility functions
-
+#[inline]
 pub fn degrees_to_radians(degrees: f32) -> f32 {
     degrees * PI / 180.0
 }
 
+#[inline]
 pub fn random_double() -> f32 {
     rand::rng().random()
 }
 
+#[inline]
 pub fn random_double_range(min: f32, max: f32) -> f32 {
     min + (max - min) * random_double()
 }
 
+#[inline]
 pub fn clamp(x: f32, min: f32, max: f32) -> f32 {
     if x < min {
         return min;

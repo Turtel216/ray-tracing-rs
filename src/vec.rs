@@ -55,6 +55,7 @@ impl Vec3 {
         self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
     }
 
+    #[inline]
     pub fn near_zero(&self) -> bool {
         const EPS: f32 = 1.0e-8;
         // Return true if the vector is close to zero in all dimensions
@@ -67,18 +68,21 @@ pub type Point3 = Vec3;
 impl Neg for Vec3 {
     type Output = Vec3;
 
+    #[inline]
     fn neg(self) -> Vec3 {
         Vec3::new(-self.x(), -self.y(), -self.z())
     }
 }
 
 impl AddAssign for Vec3 {
+    #[inline]
     fn add_assign(&mut self, v: Vec3) {
         *self = *self + v;
     }
 }
 
 impl MulAssign<f32> for Vec3 {
+    #[inline]
     fn mul_assign(&mut self, t: f32) {
         *self = *self * t;
     }
@@ -87,6 +91,7 @@ impl MulAssign<f32> for Vec3 {
 impl Add for Vec3 {
     type Output = Vec3;
 
+    #[inline]
     fn add(self, v: Vec3) -> Vec3 {
         Vec3::new(self.x() + v.x(), self.y() + v.y(), self.z() + v.z())
     }
@@ -95,6 +100,7 @@ impl Add for Vec3 {
 impl Sub for Vec3 {
     type Output = Vec3;
 
+    #[inline]
     fn sub(self, v: Vec3) -> Vec3 {
         Vec3::new(self.x() - v.x(), self.y() - v.y(), self.z() - v.z())
     }
@@ -103,6 +109,7 @@ impl Sub for Vec3 {
 impl Mul for Vec3 {
     type Output = Vec3;
 
+    #[inline]
     fn mul(self, v: Vec3) -> Vec3 {
         Vec3::new(self.x() * v.x(), self.y() * v.y(), self.z() * v.z())
     }
@@ -111,6 +118,7 @@ impl Mul for Vec3 {
 impl Mul<Vec3> for f32 {
     type Output = Vec3;
 
+    #[inline]
     fn mul(self, v: Vec3) -> Vec3 {
         Vec3::new(self * v.x(), self * v.y(), self * v.z())
     }
@@ -119,6 +127,7 @@ impl Mul<Vec3> for f32 {
 impl Mul<f32> for Vec3 {
     type Output = Vec3;
 
+    #[inline]
     fn mul(self, t: f32) -> Vec3 {
         Vec3::new(self.x() * t, self.y() * t, self.z() * t)
     }
@@ -127,6 +136,7 @@ impl Mul<f32> for Vec3 {
 impl Div<f32> for Vec3 {
     type Output = Vec3;
 
+    #[inline]
     fn div(self, t: f32) -> Vec3 {
         Vec3::new(self.x() / t, self.y() / t, self.z() / t)
     }
@@ -202,6 +212,7 @@ pub fn random_in_unit_disk() -> Vec3 {
     }
 }
 
+#[inline]
 pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
     v - 2.0 * dot(v, n) * n
 }
@@ -214,6 +225,7 @@ pub fn refract(uv: Vec3, n: Vec3, etail_over_etat: f32) -> Vec3 {
     r_out_perp + r_out_parallel
 }
 
+#[inline]
 pub fn random_unit_vector() -> Vec3 {
     unit_vector(random_in_unit_sphere())
 }

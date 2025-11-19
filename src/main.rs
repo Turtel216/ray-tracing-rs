@@ -158,7 +158,7 @@ fn main() {
     const MAX_DEPTH: i32 = 50;
 
     // World
-    let world = random_scene();
+    let world = benchmark_scene();
 
     // Camera
     let from = Point3::new(13.0, 2.0, 3.0);
