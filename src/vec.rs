@@ -1,15 +1,23 @@
-use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub};
-
 use crate::util;
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub};
+use std::simd::{StdFloat, f32x4, num::SimdFloat}; // StdFloat needed for sqrt, abs on vectors
 
-#[derive(Copy, Clone, Default)]
+#[derive(Copy, Clone, Default, Debug)]
 pub struct Vec3 {
-    e: [f32; 3],
+    e: f32x4,
 }
 
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
-        Vec3 { e: [x, y, z] }
+        Vec3 {
+            e: f32x4::from_array([x, y, z, 0.0]),
+        }
+    }
+
+    // Helper to construct directly from SIMD (internal use)
+    #[inline]
+    fn from_simd(v: f32x4) -> Vec3 {
+        Vec3 { e: v }
     }
 
     pub fn random() -> Vec3 {
@@ -45,18 +53,19 @@ impl Vec3 {
 
     #[inline]
     pub fn length(&self) -> f32 {
-        f32::sqrt(self.length_squared())
+        self.length_squared().sqrt()
     }
 
     #[inline]
     pub fn length_squared(&self) -> f32 {
-        self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
+        // (x*x + y*y + z*z + 0*0).reduce_sum()
+        (self.e * self.e).reduce_sum()
     }
 
     #[inline]
     pub fn near_zero(&self) -> bool {
         const EPS: f32 = 1.0e-8;
-        // Return true if the vector is close to zero in all dimensions
+
         self.e[0].abs() < EPS && self.e[1].abs() < EPS && self.e[2].abs() < EPS
     }
 }
@@ -65,107 +74,100 @@ pub type Point3 = Vec3;
 
 impl Neg for Vec3 {
     type Output = Vec3;
-
     #[inline]
     fn neg(self) -> Vec3 {
-        Vec3::new(-self.x(), -self.y(), -self.z())
+        Vec3::from_simd(-self.e)
     }
 }
 
 impl AddAssign for Vec3 {
     #[inline]
     fn add_assign(&mut self, v: Vec3) {
-        *self = *self + v;
+        self.e += v.e;
     }
 }
 
 impl MulAssign<f32> for Vec3 {
     #[inline]
     fn mul_assign(&mut self, t: f32) {
-        *self = *self * t;
+        // splat(t) creates [t, t, t, t]
+        self.e *= f32x4::splat(t);
     }
 }
 
 impl Add for Vec3 {
     type Output = Vec3;
-
     #[inline]
     fn add(self, v: Vec3) -> Vec3 {
-        Vec3::new(self.x() + v.x(), self.y() + v.y(), self.z() + v.z())
+        Vec3::from_simd(self.e + v.e)
     }
 }
 
 impl Sub for Vec3 {
     type Output = Vec3;
-
     #[inline]
     fn sub(self, v: Vec3) -> Vec3 {
-        Vec3::new(self.x() - v.x(), self.y() - v.y(), self.z() - v.z())
+        Vec3::from_simd(self.e - v.e)
     }
 }
 
 impl Mul for Vec3 {
     type Output = Vec3;
-
     #[inline]
     fn mul(self, v: Vec3) -> Vec3 {
-        Vec3::new(self.x() * v.x(), self.y() * v.y(), self.z() * v.z())
+        Vec3::from_simd(self.e * v.e)
     }
 }
 
 impl Mul<Vec3> for f32 {
     type Output = Vec3;
-
     #[inline]
     fn mul(self, v: Vec3) -> Vec3 {
-        Vec3::new(self * v.x(), self * v.y(), self * v.z())
+        Vec3::from_simd(f32x4::splat(self) * v.e)
     }
 }
 
 impl Mul<f32> for Vec3 {
     type Output = Vec3;
-
     #[inline]
     fn mul(self, t: f32) -> Vec3 {
-        Vec3::new(self.x() * t, self.y() * t, self.z() * t)
+        Vec3::from_simd(self.e * f32x4::splat(t))
     }
 }
 
 impl Div<f32> for Vec3 {
     type Output = Vec3;
-
     #[inline]
     fn div(self, t: f32) -> Vec3 {
-        Vec3::new(self.x() / t, self.y() / t, self.z() / t)
+        Vec3::from_simd(self.e / f32x4::splat(t))
     }
 }
 
 #[inline]
 pub fn dot(u: Vec3, v: Vec3) -> f32 {
-    u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2]
+    // x*x + y*y + z*z + 0*0
+    (u.e * v.e).reduce_sum()
 }
 
 #[inline]
 pub fn cross(u: Vec3, v: Vec3) -> Vec3 {
-    Vec3::new(
-        u.e[1] * v.e[2] - u.e[2] * v.e[1],
-        u.e[2] * v.e[0] - u.e[0] * v.e[2],
-        u.e[0] * v.e[1] - u.e[1] * v.e[0],
-    )
+    let x = u.e[1] * v.e[2] - u.e[2] * v.e[1];
+    let y = u.e[2] * v.e[0] - u.e[0] * v.e[2];
+    let z = u.e[0] * v.e[1] - u.e[1] * v.e[0];
+    Vec3::new(x, y, z)
 }
 
 #[inline]
 pub fn unit_vector(v: Vec3) -> Vec3 {
-    v / v.length()
+    Vec3::from_simd(v.e / f32x4::splat(v.length()))
 }
 
 pub fn random_in_unit_sphere() -> Vec3 {
     loop {
         let p = Vec3::random_range(-1.0, 1.0);
-        if p.length_squared() >= 1.0 {
-            continue;
+        if p.length_squared() < 1.0 {
+            return p;
         }
-        return p;
     }
 }
 
@@ -176,25 +178,21 @@ pub fn random_in_unit_disk() -> Vec3 {
             util::random_double_range(-1.0, 1.0),
             0.0,
         );
-
-        if p.length_squared() >= 1.0 {
-            continue;
+        if p.length_squared() < 1.0 {
+            return p;
         }
-
-        return p;
     }
 }
 
 #[inline]
 pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
-    v - 2.0 * dot(v, n) * n
+    v - n * 2.0 * dot(v, n)
 }
 
 pub fn refract(uv: Vec3, n: Vec3, etail_over_etat: f32) -> Vec3 {
     let cos_theta = f32::min(dot(-uv, n), 1.0);
-    let r_out_perp = etail_over_etat * (uv + cos_theta * n);
-    let r_out_parallel = -f32::sqrt(f32::abs(1.0 - r_out_perp.length_squared())) * n;
-
+    let r_out_perp = (uv + n * cos_theta) * etail_over_etat;
+    let r_out_parallel = n * -f32::sqrt(f32::abs(1.0 - r_out_perp.length_squared()));
     r_out_perp + r_out_parallel
 }
 
