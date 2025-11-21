@@ -64,7 +64,7 @@ Benchmark results on an AMD Ryzen 5 3600 (6 cores / 12 threads) using [hyperfine
 | [Single Threaded](https://gitlab.com/papakonstantinou/ray-tracing-rs/-/tree/benchmark/single-threaded-no-simd?ref_type=heads) | 24.420 |
 | [Single Threaded + SIMD](https://gitlab.com/papakonstantinou/ray-tracing-rs/-/tree/benchmark/single-threaded-simd?ref_type=heads) | 21.908 |
 | [Multi-threaded](https://gitlab.com/papakonstantinou/ray-tracing-rs/-/tree/benchmark/multi-threaded-no-simd?ref_type=heads) | 14.362 |
-| [Multi-threaded + SIMD](https://gitlab.com/papakonstantinou/ray-tracing-rs/-/tree/benchmark/multi-threaded-simd?ref_type=heads) | 14.334 |
+| [Multi-threaded + SIMD](https://gitlab.com/papakonstantinou/ray-tracing-rs/-/tree/benchmark/multi-threaded-simd?ref_type=heads) | 13.922 |
 
 ### Optimization Techniques
 
