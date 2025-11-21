@@ -1,7 +1,6 @@
 use crate::util;
 use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub};
-use std::simd::{StdFloat, f32x4, num::SimdFloat}; // StdFloat needed for sqrt, abs on vectors
-
+use std::simd::{StdFloat, f32x4, num::SimdFloat};
 #[derive(Copy, Clone, Default, Debug)]
 pub struct Vec3 {
     e: f32x4,
@@ -14,7 +13,6 @@ impl Vec3 {
         }
     }
 
-    // Helper to construct directly from SIMD (internal use)
     #[inline]
     fn from_simd(v: f32x4) -> Vec3 {
         Vec3 { e: v }
@@ -58,7 +56,6 @@ impl Vec3 {
 
     #[inline]
     pub fn length_squared(&self) -> f32 {
-        // (x*x + y*y + z*z + 0*0).reduce_sum()
         (self.e * self.e).reduce_sum()
     }
 
@@ -90,7 +87,6 @@ impl AddAssign for Vec3 {
 impl MulAssign<f32> for Vec3 {
     #[inline]
     fn mul_assign(&mut self, t: f32) {
-        // splat(t) creates [t, t, t, t]
         self.e *= f32x4::splat(t);
     }
 }
@@ -145,7 +141,6 @@ impl Div<f32> for Vec3 {
 
 #[inline]
 pub fn dot(u: Vec3, v: Vec3) -> f32 {
-    // x*x + y*y + z*z + 0*0
     (u.e * v.e).reduce_sum()
 }
 
