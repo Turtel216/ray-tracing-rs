@@ -11,6 +11,7 @@ mod vec;
 
 use std::{io, sync::Arc};
 
+use indicatif::ProgressBar;
 use rayon::prelude::*;
 
 use crate::{
@@ -191,10 +192,15 @@ fn main() {
 
     // Render
 
+    let total_scanlines = 0..IMAGE_HEIGHT;
+    let bar = ProgressBar::new(total_scanlines.len() as u64);
+
     print!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
 
-    for j in (0..IMAGE_HEIGHT).rev() {
-        eprint!("\rScanlines remaining: {} ", j);
+    eprintln!("Image Rendering");
+
+    for j in total_scanlines.rev() {
+        bar.inc(1);
         let pixel_colors: Vec<_> = (0..IMAGE_WIDTH)
             .into_par_iter()
             .map(|i| {
@@ -213,5 +219,6 @@ fn main() {
         }
     }
 
-    eprint!("\nDone.\n");
+    bar.finish();
+    eprintln!("\n\nFinished Rendering");
 }
