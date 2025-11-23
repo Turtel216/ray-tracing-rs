@@ -1,2 +1,0 @@
-createSrcSidebar('[["tracing",["",[],["camera.rs","color.rs","hittable.rs","hittable_list.rs","main.rs","material.rs","ray.rs","sphere.rs","util.rs","vec.rs"]]]]');
-//{"start":19,"fragment_lengths":[141]}

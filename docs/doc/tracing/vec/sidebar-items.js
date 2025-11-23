@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["cross","dot","random_in_unit_disk","random_in_unit_sphere","random_unit_vector","reflect","refract","unit_vector"],"struct":["Vec3"],"type":["Point3"]};

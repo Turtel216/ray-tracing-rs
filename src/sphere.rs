@@ -78,8 +78,8 @@ impl Hittable for Sphere {
         let oc = r.origin() - self.center;
         let a = r.direction().length_squared();
         let half_b = vec::dot(oc, r.direction());
-        let c = oc.length_squared() - self.radius * self.radius;
-        let discriminant = half_b * half_b - a * c;
+        let c = self.radius.mul_add(-self.radius, oc.length_squared());
+        let discriminant = half_b.mul_add(half_b, -(a * c));
 
         // If the discriminant is negative, there are no real roots, so no intersection.
         if discriminant < 0.0 {

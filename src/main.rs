@@ -1,6 +1,9 @@
 #![feature(portable_simd)]
 #![allow(clippy::cast_precision_loss)]
+#![allow(clippy::many_single_char_names)]
+#![allow(clippy::cast_sign_loss)]
 #![allow(clippy::cast_possible_truncation)]
+
 mod camera;
 mod color;
 mod hittable;

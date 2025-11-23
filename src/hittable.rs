@@ -48,7 +48,7 @@ impl HitRecord {
     ///
     /// * `r` - The ray that intersected the surface.
     /// * `outward_normal` - The geometric normal of the surface, assuming it points "outward".
-    ///                      This vector is assumed to have unit length.
+    ///   This vector is assumed to have unit length.
     pub fn set_face_normal(&mut self, r: &Ray, outward_normal: Vec3) {
         // The dot product tells us if the ray and outward_normal are in opposite directions.
         // If dot < 0, the ray is hitting the front face.

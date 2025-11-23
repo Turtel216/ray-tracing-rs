@@ -35,7 +35,7 @@ impl HittableList {
     /// # Arguments
     ///
     /// * `object` - A `Box<dyn Hittable>` representing the object to be added to the scene.
-    ///              The object is moved into the list.
+    ///   The object is moved into the list.
     pub fn add(&mut self, object: Box<dyn Hittable>) {
         self.objects.push(object);
     }

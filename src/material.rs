@@ -105,7 +105,7 @@ impl Metal {
     ///
     /// * `a` - The color (albedo) of the metal.
     /// * `f` - The fuzziness of the reflection. Values greater than 1.0 are clamped to 1.0.
-    pub fn new(a: Color, f: f32) -> Self {
+    pub const fn new(a: Color, f: f32) -> Self {
         Self {
             albedo: a,
             fuzz: f.clamp(0.0, 1.0),
@@ -160,7 +160,7 @@ impl Dielectric {
     fn reflectance(cosine: f32, ref_idx: f32) -> f32 {
         let mut r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
         r0 = r0 * r0;
-        r0 + (1.0 - r0) * f32::powf(1.0 - cosine, 5.0)
+        (1.0 - r0).mul_add(f32::powf(1.0 - cosine, 5.0), r0)
     }
 }
 
