@@ -9,7 +9,7 @@ mod sphere;
 mod util;
 mod vec;
 
-use std::{io, sync::Arc};
+use std::{fs, sync::Arc};
 
 use indicatif::ProgressBar;
 use rayon::prelude::*;
@@ -161,7 +161,7 @@ fn main() {
     const MAX_DEPTH: i32 = 50;
 
     // World
-    let world = random_scene();
+    let world = benchmark_scene();
 
     // Camera
     let from = Point3::new(13.0, 2.0, 3.0);
@@ -194,10 +194,11 @@ fn main() {
 
     let total_scanlines = 0..IMAGE_HEIGHT;
     let bar = ProgressBar::new(total_scanlines.len() as u64);
+    let mut ppm_bytes: Vec<u8> = Vec::new();
 
-    print!("P3\n{IMAGE_WIDTH} {IMAGE_HEIGHT}\n255\n");
+    ppm_bytes.append(&mut format!("P3\n{IMAGE_WIDTH} {IMAGE_HEIGHT}\n255\n").into_bytes());
 
-    eprintln!("Image Rendering");
+    println!("Image Rendering");
 
     for j in total_scanlines.rev() {
         bar.inc(1);
@@ -215,10 +216,14 @@ fn main() {
             })
             .collect();
         for pixel_color in pixel_colors {
-            color::write_color(&mut io::stdout(), pixel_color, SAMPLES_PER_PIXEL);
+            ppm_bytes.append(&mut color::write_color(pixel_color, SAMPLES_PER_PIXEL));
         }
     }
 
     bar.finish();
-    eprintln!("\n\nFinished Rendering");
+    println!("\n\nFinished Rendering");
+
+    println!("Saving Image to image.png");
+    fs::write("image.ppm", ppm_bytes).expect("Could not write to file image.ppm");
+    println!("Image saved");
 }

@@ -53,7 +53,7 @@ cd raytracer-rs
 cargo build --release
 
 # Run the raytracer
-cargo run --release > image.ppm
+cargo run --release
 ```
 
 ## Performance Benchmarks
