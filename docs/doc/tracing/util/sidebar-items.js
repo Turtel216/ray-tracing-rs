@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["clamp","random_double","random_double_range"]};

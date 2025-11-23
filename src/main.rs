@@ -1,4 +1,6 @@
 #![feature(portable_simd)]
+#![allow(clippy::cast_precision_loss)]
+#![allow(clippy::cast_possible_truncation)]
 mod camera;
 mod color;
 mod hittable;
@@ -26,6 +28,7 @@ use crate::{
     vec::{Point3, Vec3},
 };
 
+#[allow(dead_code)]
 fn random_scene() -> HittableList {
     let mut world = HittableList::new();
 

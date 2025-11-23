@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["benchmark_scene","main","random_scene","ray_color"],"mod":["camera","color","hittable","hittable_list","material","ray","sphere","util","vec"]};
