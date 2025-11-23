@@ -7,20 +7,20 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new(origin: Point3, direction: Vec3) -> Ray {
-        Ray {
+    pub const fn new(origin: Point3, direction: Vec3) -> Self {
+        Self {
             orig: origin,
             dir: direction,
         }
     }
 
     #[inline]
-    pub fn origin(&self) -> Point3 {
+    pub const fn origin(&self) -> Point3 {
         self.orig
     }
 
     #[inline]
-    pub fn direction(&self) -> Vec3 {
+    pub const fn direction(&self) -> Vec3 {
         self.dir
     }
 

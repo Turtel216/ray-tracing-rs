@@ -1,6 +1,6 @@
 use crate::ray::Ray;
+use crate::vec;
 use crate::vec::{Point3, Vec3};
-use crate::{util, vec};
 
 pub struct Camera {
     origin: Point3,
@@ -21,8 +21,8 @@ impl Camera {
         aspect_ratio: f32,
         aperture: f32,
         focus_dist: f32,
-    ) -> Camera {
-        let theta = util::degrees_to_radians(vfov);
+    ) -> Self {
+        let theta = vfov.to_radians();
         let h = f32::tan(theta / 2.0);
         let viewport_height = 2.0 * h;
         let viewport_width = aspect_ratio * viewport_height;
@@ -38,7 +38,7 @@ impl Camera {
 
         let lens_radius = aperture / 2.0;
 
-        Camera {
+        Self {
             origin,
             lower_left_corner,
             horizontal,

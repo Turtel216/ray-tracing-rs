@@ -7,8 +7,8 @@ pub struct HittableList {
 }
 
 impl HittableList {
-    pub fn new() -> HittableList {
-        Default::default()
+    pub fn new() -> Self {
+        Self::default()
     }
 
     pub fn add(&mut self, object: Box<dyn Hittable>) {

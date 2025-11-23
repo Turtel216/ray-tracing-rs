@@ -12,8 +12,8 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn new(cen: Point3, r: f32, material: Arc<dyn Material>) -> Sphere {
-        Sphere {
+    pub fn new(cen: Point3, r: f32, material: Arc<dyn Material>) -> Self {
+        Self {
             center: cen,
             radius: r,
             mat: material,
@@ -26,8 +26,8 @@ impl Hittable for Sphere {
         let oc = r.origin() - self.center;
         let a = r.direction().length_squared();
         let half_b = vec::dot(oc, r.direction());
-        let c = oc.length_squared() - self.radius * self.radius;
-        let discriminant = half_b * half_b - a * c;
+        let c = self.radius.mul_add(-self.radius, oc.length_squared());
+        let discriminant = half_b.mul_add(half_b, -(a * c));
         if discriminant < 0.0 {
             return false;
         }

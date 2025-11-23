@@ -1,12 +1,4 @@
-pub use std::f32::INFINITY;
-pub use std::f32::consts::PI;
-
 use rand::Rng;
-
-#[inline]
-pub fn degrees_to_radians(degrees: f32) -> f32 {
-    degrees * PI / 180.0
-}
 
 #[inline]
 pub fn random_double() -> f32 {
@@ -15,7 +7,7 @@ pub fn random_double() -> f32 {
 
 #[inline]
 pub fn random_double_range(min: f32, max: f32) -> f32 {
-    min + (max - min) * random_double()
+    (max - min).mul_add(random_double(), min)
 }
 
 #[inline]

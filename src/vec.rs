@@ -8,27 +8,27 @@ pub struct Vec3 {
 }
 
 impl Vec3 {
-    pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
-        Vec3 {
+    pub const fn new(x: f32, y: f32, z: f32) -> Self {
+        Self {
             e: f32x4::from_array([x, y, z, 0.0]),
         }
     }
 
     #[inline]
-    fn from_simd(v: f32x4) -> Vec3 {
-        Vec3 { e: v }
+    const fn from_simd(v: f32x4) -> Self {
+        Self { e: v }
     }
 
-    pub fn random() -> Vec3 {
-        Vec3::new(
+    pub fn random() -> Self {
+        Self::new(
             util::random_double(),
             util::random_double(),
             util::random_double(),
         )
     }
 
-    pub fn random_range(min: f32, max: f32) -> Vec3 {
-        Vec3::new(
+    pub fn random_range(min: f32, max: f32) -> Self {
+        Self::new(
             util::random_double_range(min, max),
             util::random_double_range(min, max),
             util::random_double_range(min, max),
@@ -70,16 +70,16 @@ impl Vec3 {
 pub type Point3 = Vec3;
 
 impl Neg for Vec3 {
-    type Output = Vec3;
+    type Output = Self;
     #[inline]
-    fn neg(self) -> Vec3 {
-        Vec3::from_simd(-self.e)
+    fn neg(self) -> Self {
+        Self::from_simd(-self.e)
     }
 }
 
 impl AddAssign for Vec3 {
     #[inline]
-    fn add_assign(&mut self, v: Vec3) {
+    fn add_assign(&mut self, v: Self) {
         self.e += v.e;
     }
 }
@@ -92,26 +92,26 @@ impl MulAssign<f32> for Vec3 {
 }
 
 impl Add for Vec3 {
-    type Output = Vec3;
+    type Output = Self;
     #[inline]
-    fn add(self, v: Vec3) -> Vec3 {
-        Vec3::from_simd(self.e + v.e)
+    fn add(self, v: Self) -> Self {
+        Self::from_simd(self.e + v.e)
     }
 }
 
 impl Sub for Vec3 {
-    type Output = Vec3;
+    type Output = Self;
     #[inline]
-    fn sub(self, v: Vec3) -> Vec3 {
-        Vec3::from_simd(self.e - v.e)
+    fn sub(self, v: Self) -> Self {
+        Self::from_simd(self.e - v.e)
     }
 }
 
 impl Mul for Vec3 {
-    type Output = Vec3;
+    type Output = Self;
     #[inline]
-    fn mul(self, v: Vec3) -> Vec3 {
-        Vec3::from_simd(self.e * v.e)
+    fn mul(self, v: Self) -> Self {
+        Self::from_simd(self.e * v.e)
     }
 }
 
@@ -124,18 +124,18 @@ impl Mul<Vec3> for f32 {
 }
 
 impl Mul<f32> for Vec3 {
-    type Output = Vec3;
+    type Output = Self;
     #[inline]
-    fn mul(self, t: f32) -> Vec3 {
-        Vec3::from_simd(self.e * f32x4::splat(t))
+    fn mul(self, t: f32) -> Self {
+        Self::from_simd(self.e * f32x4::splat(t))
     }
 }
 
 impl Div<f32> for Vec3 {
-    type Output = Vec3;
+    type Output = Self;
     #[inline]
-    fn div(self, t: f32) -> Vec3 {
-        Vec3::from_simd(self.e / f32x4::splat(t))
+    fn div(self, t: f32) -> Self {
+        Self::from_simd(self.e / f32x4::splat(t))
     }
 }
 
@@ -146,9 +146,9 @@ pub fn dot(u: Vec3, v: Vec3) -> f32 {
 
 #[inline]
 pub fn cross(u: Vec3, v: Vec3) -> Vec3 {
-    let x = u.e[1] * v.e[2] - u.e[2] * v.e[1];
-    let y = u.e[2] * v.e[0] - u.e[0] * v.e[2];
-    let z = u.e[0] * v.e[1] - u.e[1] * v.e[0];
+    let x = u.e[1].mul_add(v.e[2], -(u.e[2] * v.e[1]));
+    let y = u.e[2].mul_add(v.e[0], -(u.e[0] * v.e[2]));
+    let z = u.e[0].mul_add(v.e[1], -(u.e[1] * v.e[0]));
     Vec3::new(x, y, z)
 }
 

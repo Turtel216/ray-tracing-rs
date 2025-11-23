@@ -40,9 +40,9 @@ fn random_scene() -> HittableList {
         for b in -11..11 {
             let choose_mat = util::random_double();
             let center = Point3::new(
-                a as f32 + 0.9 * util::random_double(),
+                0.9f32.mul_add(util::random_double(), a as f32),
                 0.2,
-                b as f32 + 0.9 * util::random_double(),
+                0.9f32.mul_add(util::random_double(), b as f32),
             );
 
             if (center - Point3::new(4.0, 0.2, 0.0)).length() > 0.9 {
@@ -122,7 +122,7 @@ fn benchmark_scene() -> HittableList {
         material3,
     )));
 
-    return world;
+    world
 }
 
 fn ray_color(l: &Ray, world: &dyn Hittable, depth: i32) -> Color {
@@ -132,15 +132,15 @@ fn ray_color(l: &Ray, world: &dyn Hittable, depth: i32) -> Color {
     }
 
     let mut rec = HitRecord::new();
-    if world.hit(l, 0.001, util::INFINITY, &mut rec) {
+    if world.hit(l, 0.001, f32::INFINITY, &mut rec) {
         let mut attenuation = Color::default();
         let mut scattered = Ray::default();
-        if rec
-            .mat
-            .as_ref()
-            .unwrap()
-            .scatter(l, &rec, &mut attenuation, &mut scattered)
-        {
+        if rec.mat.as_ref().expect("Failed to load material").scatter(
+            l,
+            &rec,
+            &mut attenuation,
+            &mut scattered,
+        ) {
             return attenuation * ray_color(&scattered, world, depth - 1);
         }
         return Color::new(0.0, 0.0, 0.0);
@@ -161,7 +161,7 @@ fn main() {
     const MAX_DEPTH: i32 = 50;
 
     // World
-    let world = benchmark_scene();
+    let world = random_scene();
 
     // Camera
     let from = Point3::new(13.0, 2.0, 3.0);
@@ -195,7 +195,7 @@ fn main() {
     let total_scanlines = 0..IMAGE_HEIGHT;
     let bar = ProgressBar::new(total_scanlines.len() as u64);
 
-    print!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
+    print!("P3\n{IMAGE_WIDTH} {IMAGE_HEIGHT}\n255\n");
 
     eprintln!("Image Rendering");
 
