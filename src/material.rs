@@ -14,6 +14,11 @@ use crate::hittable::HitRecord;
 use crate::ray::Ray;
 use crate::{util, vec};
 
+pub struct ScatterRecord {
+    pub attenuation: Color,
+    pub scattered: Ray,
+}
+
 /// A trait for materials that define how light rays interact with a surface.
 ///
 /// The `Send + Sync` bounds are required to allow materials to be shared
@@ -34,13 +39,7 @@ pub trait Material: Send + Sync {
     /// # Returns
     ///
     /// `true` if the ray is scattered and not absorbed. `false` if the ray is absorbed by the material.
-    fn scatter(
-        &self,
-        r_in: &Ray,
-        rec: &HitRecord,
-        attenuation: &mut Color,
-        scattered: &mut Ray,
-    ) -> bool;
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord>;
 }
 
 /// A diffuse (matte) material that scatters light uniformly.
@@ -61,13 +60,7 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(
-        &self,
-        _r_in: &Ray,
-        rec: &HitRecord,
-        attenuation: &mut Color,
-        scattered: &mut Ray,
-    ) -> bool {
+    fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
         // The scatter direction is a random unit vector added to the surface normal.
         // This produces a random direction within a hemisphere oriented around the normal.
         let mut scatter_direction = rec.normal + vec::random_unit_vector();
@@ -78,10 +71,10 @@ impl Material for Lambertian {
             scatter_direction = rec.normal;
         }
 
-        *attenuation = self.albedo;
-        *scattered = Ray::new(rec.p, scatter_direction);
-        // A Lambertian surface always scatters light.
-        true
+        Some(ScatterRecord {
+            attenuation: self.albedo,
+            scattered: Ray::new(rec.p, scatter_direction),
+        })
     }
 }
 
@@ -114,24 +107,18 @@ impl Metal {
 }
 
 impl Material for Metal {
-    fn scatter(
-        &self,
-        r_in: &Ray,
-        rec: &HitRecord,
-        attenuation: &mut Color,
-        scattered: &mut Ray,
-    ) -> bool {
-        // Calculate the perfect reflection direction.
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
         let reflected = vec::reflect(vec::unit_vector(r_in.direction()), rec.normal);
+        let scattered = Ray::new(rec.p, reflected + self.fuzz * vec::random_in_unit_sphere());
 
-        *attenuation = self.albedo;
-        // The final scattered ray is the perfect reflection plus a random perturbation
-        // based on the fuzz factor.
-        *scattered = Ray::new(rec.p, reflected + self.fuzz * vec::random_in_unit_sphere());
-
-        // The ray is scattered only if the reflection is in the same hemisphere as the normal.
-        // This prevents reflections from scattering "into" the surface.
-        vec::dot(scattered.direction(), rec.normal) > 0.0
+        if vec::dot(scattered.direction(), rec.normal) > 0.0 {
+            Some(ScatterRecord {
+                attenuation: self.albedo,
+                scattered,
+            })
+        } else {
+            None
+        }
     }
 }
 
@@ -165,16 +152,7 @@ impl Dielectric {
 }
 
 impl Material for Dielectric {
-    fn scatter(
-        &self,
-        r_in: &Ray,
-        rec: &HitRecord,
-        attenuation: &mut Color,
-        scattered: &mut Ray,
-    ) -> bool {
-        // Dielectric materials do not absorb color, so attenuation is always white.
-        *attenuation = Color::new(1.0, 1.0, 1.0);
-
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
         // Determine the ratio of refractive indices based on whether the ray
         // is entering or exiting the material.
         let refraction_ratio = if rec.front_face {
@@ -202,7 +180,9 @@ impl Material for Dielectric {
             vec::refract(unit_direction, rec.normal, refraction_ratio)
         };
 
-        *scattered = Ray::new(rec.p, direction);
-        true
+        Some(ScatterRecord {
+            attenuation: Color::new(1.0, 1.0, 1.0),
+            scattered: Ray::new(rec.p, direction),
+        })
     }
 }

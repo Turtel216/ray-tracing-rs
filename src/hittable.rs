@@ -16,7 +16,7 @@ use crate::vec::{self, Point3, Vec3};
 /// When a ray hits a `Hittable` object, a `HitRecord` is populated with details
 /// about the hit, such as the intersection point, the surface normal, and the
 /// material of the object.
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct HitRecord {
     /// The point in 3D space where the intersection occurred.
     pub p: Point3,
@@ -24,7 +24,7 @@ pub struct HitRecord {
     /// This normal always points against the incident ray.
     pub normal: Vec3,
     /// A reference to the material of the object that was hit.
-    pub mat: Option<Arc<dyn Material>>,
+    pub mat: Arc<dyn Material>,
     /// The parameter `t` along the ray where the intersection occurred, such that `p = ray.origin() + t * ray.direction()`.
     pub t: f32,
     /// A boolean indicating whether the ray hit the front face of the surface.
@@ -33,11 +33,6 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
-    /// Creates a new, default `HitRecord`.
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     /// Sets the surface normal based on the ray's direction.
     ///
     /// This method ensures the normal vector in the `HitRecord` always points
@@ -79,7 +74,7 @@ pub trait Hittable: Send + Sync {
     ///
     /// # Returns
     ///
-    /// `true` if the ray hits the object within the interval `[t_min, t_max]`,
-    /// and `rec` is updated. Otherwise, returns `false`.
-    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, rec: &mut HitRecord) -> bool;
+    /// `Some` `HitRecord` populated with intersection data if a hit occurs.
+    ///  Otherwise, returns `None`.
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
 }

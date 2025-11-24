@@ -14,6 +14,7 @@ mod sphere;
 mod util;
 mod vec;
 
+use core::f32;
 use std::{fs, sync::Arc};
 
 use indicatif::ProgressBar;
@@ -22,7 +23,7 @@ use rayon::prelude::*;
 use crate::{
     camera::Camera,
     color::Color,
-    hittable::{HitRecord, Hittable},
+    hittable::Hittable,
     hittable_list::HittableList,
     material::Dielectric,
     material::{Lambertian, Metal},
@@ -128,28 +129,20 @@ fn benchmark_scene() -> HittableList {
     world
 }
 
-fn ray_color(l: &Ray, world: &dyn Hittable, depth: i32) -> Color {
+fn ray_color(r: &Ray, world: &dyn Hittable, depth: i32) -> Color {
     // Make sure there is no stack overflow
     if depth <= 0 {
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    let mut rec = HitRecord::new();
-    if world.hit(l, 0.001, f32::INFINITY, &mut rec) {
-        let mut attenuation = Color::default();
-        let mut scattered = Ray::default();
-        if rec.mat.as_ref().expect("Failed to load material").scatter(
-            l,
-            &rec,
-            &mut attenuation,
-            &mut scattered,
-        ) {
-            return attenuation * ray_color(&scattered, world, depth - 1);
+    if let Some(hit_rec) = world.hit(r, 0.001, f32::INFINITY) {
+        if let Some(scatter_rec) = hit_rec.mat.scatter(r, &hit_rec) {
+            return scatter_rec.attenuation * ray_color(&scatter_rec.scattered, world, depth - 1);
         }
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    let unit_direction = vec::unit_vector(l.direction());
+    let unit_direction = vec::unit_vector(r.direction());
     let t = 0.5 * (unit_direction.y() + 1.0);
     (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
 }

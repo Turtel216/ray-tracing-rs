@@ -57,24 +57,12 @@ impl Hittable for Sphere {
     /// * `r` - The ray to test for intersection.
     /// * `t_min` - The minimum valid value for the ray parameter `t`.
     /// * `t_max` - The maximum valid value for the ray parameter `t`.
-    /// * `rec` - A mutable `HitRecord` that will be populated with intersection data if a hit occurs.
     ///
     /// # Returns
     ///
-    /// `true` if the ray hits the sphere within the interval `[t_min, t_max]`, and `rec`
-    /// is updated with the hit details. Otherwise, returns `false`.
-    fn hit(&self, r: &Ray, t_min: f32, t_max: f32, rec: &mut HitRecord) -> bool {
-        // Deriving the quadratic equation for ray-sphere intersection:
-        // (ray_origin + t*ray_direction - sphere_center) · (ray_origin + t*ray_direction - sphere_center) = radius^2
-        // Let oc = ray_origin - sphere_center.
-        // (t*ray_direction + oc) · (t*ray_direction + oc) = radius^2
-        // t^2*(D·D) + 2*t*(D·oc) + (oc·oc) - r^2 = 0
-        // Where D is ray_direction.
-        // This is a quadratic equation at^2 + bt + c = 0, with:
-        // a = D·D
-        // b = 2*(D·oc)
-        // c = (oc·oc) - r^2
-        // We use a simplified form with half_b = D·oc.
+    /// `Some` `HitRecord` populated with intersection data if a hit occurs.
+    ///  Otherwise, returns `None`.
+    fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc = r.origin() - self.center;
         let a = r.direction().length_squared();
         let half_b = vec::dot(oc, r.direction());
@@ -83,30 +71,30 @@ impl Hittable for Sphere {
 
         // If the discriminant is negative, there are no real roots, so no intersection.
         if discriminant < 0.0 {
-            return false;
+            return None;
         }
 
         let sqrt_d = discriminant.sqrt();
 
-        // Find the nearest root that lies in the acceptable range [t_min, t_max].
-        // Check the smaller root first.
         let mut root = (-half_b - sqrt_d) / a;
         if root <= t_min || t_max <= root {
             // Smaller root is outside the range, check the larger root.
             root = (-half_b + sqrt_d) / a;
             if root <= t_min || t_max <= root {
                 // Both roots are outside the range.
-                return false;
+                return None;
             }
         }
 
-        // A valid intersection was found. Populate the HitRecord.
-        rec.t = root;
-        rec.p = r.at(rec.t);
+        let mut rec = HitRecord {
+            t: root,
+            p: r.at(root),
+            mat: self.mat.clone(),
+            normal: Default::default(),
+            front_face: Default::default(),
+        };
         let outward_normal = (rec.p - self.center) / self.radius;
         rec.set_face_normal(r, outward_normal);
-        rec.mat = Some(self.mat.clone());
-
-        true
+        Some(rec)
     }
 }
