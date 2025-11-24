@@ -36,11 +36,7 @@ fn random_scene() -> HittableList {
     let mut world = HittableList::new();
 
     let ground_material = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Box::new(Sphere::new(
-        Point3::new(0.0, -1000.0, 0.0),
-        1000.0,
-        ground_material,
-    )));
+    add_to_world!(world, ground_material, 0.0, -1000.0, 0.0, 1000.0);
 
     for a in -11..11 {
         for b in -11..11 {
@@ -56,7 +52,7 @@ fn random_scene() -> HittableList {
                     // Diffuse
                     let albedo = Color::random() * Color::random();
                     let sphere_material = Arc::new(Lambertian::new(albedo));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    add_to_world!(world, sphere_material, center, 0.2);
                 } else if choose_mat < 0.95 {
                     // Metal
                     let albedo = Color::random_range(0.5, 1.0);

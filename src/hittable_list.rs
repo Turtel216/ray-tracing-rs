@@ -8,6 +8,20 @@
 use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
 
+#[macro_export]
+macro_rules! add_to_world {
+    ($world: expr, $material: expr, $x: expr, $y: expr, $z: expr, $r: expr) => {
+        $world.add(Box::new(Sphere::new(
+            Point3::new($x, $y, $z),
+            $r,
+            $material,
+        )))
+    };
+    ($world: expr, $material: expr, $point: expr, $r: expr) => {
+        $world.add(Box::new(Sphere::new($point, $r, $material)))
+    };
+}
+
 /// A container for a list of `Hittable` objects, representing a scene.
 ///
 /// This struct holds a vector of `Box<dyn Hittable>`, allowing it to store
