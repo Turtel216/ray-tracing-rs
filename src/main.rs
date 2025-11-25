@@ -36,7 +36,8 @@ use crate::{
 fn random_scene() -> HittableList {
     let mut world = HittableList::new();
 
-    let ground_material = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    //let ground_material = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    let ground_material = make_material!(Lambertian, 0.5, 0.5, 0.5);
     add_to_world!(world, ground_material, 0.0, -1000.0, 0.0, 1000.0);
 
     for a in -11..11 {
@@ -52,30 +53,30 @@ fn random_scene() -> HittableList {
                 if choose_mat < 0.8 {
                     // Diffuse
                     let albedo = Color::random() * Color::random();
-                    let sphere_material = Arc::new(Lambertian::new(albedo));
+                    let sphere_material = make_material!(Lambertian, albedo);
                     add_to_world!(world, sphere_material, center, 0.2);
                 } else if choose_mat < 0.95 {
                     // Metal
                     let albedo = Color::random_range(0.5, 1.0);
                     let fuzz = util::random_double_range(0.0, 0.5);
-                    let sphere_material = Arc::new(Metal::new(albedo, fuzz));
+                    let sphere_material = make_material!(Metal, albedo, fuzz);
                     add_to_world!(world, sphere_material, center, 0.02);
                 } else {
                     // Glass
-                    let sphere_material = Arc::new(Dielectric::new(1.5));
+                    let sphere_material = make_material!(Dielectric, 1.5);
                     add_to_world!(world, sphere_material, center, 0.2);
                 }
             }
         }
     }
 
-    let material1 = Arc::new(Dielectric::new(1.5));
+    let material1 = make_material!(Dielectric, 1.5);
     add_to_world!(world, material1, 0.0, 1.0, 0.0, 1.0);
 
-    let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    let material2 = make_material!(Lambertian, 0.5, 0.2, 0.1);
     add_to_world!(world, material2, -4.0, 1.0, 0.0, 1.0);
 
-    let material3 = Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    let material3 = make_material!(Metal, 0.7, 0.6, 0.6, 0.0);
     add_to_world!(world, material3, 4.0, 1.0, 0.0, 1.0);
 
     world
@@ -86,25 +87,17 @@ fn random_scene() -> HittableList {
 fn benchmark_scene() -> HittableList {
     let mut world = HittableList::new();
 
-    let ground_material = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    let ground_material = make_material!(Lambertian, 0.5, 0.5, 0.5);
     add_to_world!(world, ground_material, 0.0, -1000.0, 0.0, 1000.0);
 
-    let material1 = Arc::new(Dielectric::new(1.5));
+    let material1 = make_material!(Dielectric, 1.5);
     add_to_world!(world, material1, 0.0, 1.0, 0.0, 1.0);
 
-    let material2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Box::new(Sphere::new(
-        Point3::new(-4.0, 1.0, 0.0),
-        1.0,
-        material2,
-    )));
+    let material2 = make_material!(Lambertian, 0.5, 0.2, 0.1);
+    add_to_world!(world, material2, -4.0, 1.0, 0.0, 1.0);
 
-    let material3 = Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Box::new(Sphere::new(
-        Point3::new(4.0, 1.0, 0.0),
-        1.0,
-        material3,
-    )));
+    let material3 = make_material!(Metal, 0.7, 0.6, 0.5, 0.0);
+    add_to_world!(world, material3, 4.0, 1.0, 0.0, 1.0);
 
     world
 }
@@ -137,7 +130,7 @@ fn main() {
     const MAX_DEPTH: i32 = 50;
 
     // World
-    let world = random_scene();
+    let world = benchmark_scene();
 
     // Camera
     let from = Point3::new(13.0, 2.0, 3.0);

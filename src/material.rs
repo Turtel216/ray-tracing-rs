@@ -14,6 +14,25 @@ use crate::hittable::HitRecord;
 use crate::ray::Ray;
 use crate::{util, vec};
 
+#[macro_export]
+macro_rules! make_material {
+    ($t: ty, $r: expr, $g: expr, $b: expr) => {
+        Arc::new(<$t>::new(Color::new($r, $g, $b)))
+    };
+    ($t: ty, $color: expr, $fuzz: expr) => {
+        Arc::new(<$t>::new($color, $fuzz))
+    };
+    ($t: ty, $r: expr, $g: expr, $b: expr, $fuzz: expr) => {
+        Arc::new(<$t>::new(Color::new($r, $g, $b), $fuzz))
+    };
+    ($t: ty, $color:expr) => {
+        Arc::new(<$t>::new($color))
+    };
+    ($t: ty, $refraction: expr) => {
+        Arc::new($t:new($refranction))
+    };
+}
+
 pub struct ScatterRecord {
     pub attenuation: Color,
     pub scattered: Ray,
